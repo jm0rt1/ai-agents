@@ -23,9 +23,9 @@ class Agent:
         self.x += speed * np.cos(self.direction)
         self.y += speed * np.sin(self.direction)
 
-        # Boundaries
-        self.x = np.clip(self.x, 0, WIDTH)
-        self.y = np.clip(self.y, 0, HEIGHT)
+        # Wrap-around behavior
+        self.x %= WIDTH
+        self.y %= HEIGHT
 
     def display(self, screen):
         pygame.draw.circle(screen, self.color, (int(self.x), int(self.y)), 10)
@@ -36,7 +36,16 @@ class Predator(Agent):
         super().__init__(x, y, PREDATOR_COLOR)
 
     def move_towards(self, target, speed=1):
-        angle_to_target = np.arctan2(target.y - self.y, target.x - self.x)
+        dx = target.x - self.x
+        dy = target.y - self.y
+
+        # Handle wrap-around
+        if abs(dx) > WIDTH / 2:
+            dx = -np.sign(dx) * (WIDTH - abs(dx))
+        if abs(dy) > HEIGHT / 2:
+            dy = -np.sign(dy) * (HEIGHT - abs(dy))
+
+        angle_to_target = np.arctan2(dy, dx)
         self.direction = angle_to_target
         self.move(speed)
 
@@ -46,8 +55,18 @@ class Prey(Agent):
         super().__init__(x, y, PREY_COLOR)
 
     def move_away_from(self, target, speed=1):
-        angle_to_target = np.arctan2(self.y - target.y, self.x - target.x)
-        self.direction = angle_to_target
+        dx = target.x - self.x
+        dy = target.y - self.y
+
+        # Handle wrap-around
+        if abs(dx) > WIDTH / 2:
+            dx = -np.sign(dx) * (WIDTH - abs(dx))
+        if abs(dy) > HEIGHT / 2:
+            dy = -np.sign(dy) * (HEIGHT - abs(dy))
+
+        # Calculate angle away from target
+        angle_away_from_target = np.arctan2(-dy, -dx)
+        self.direction = angle_away_from_target
         self.move(speed)
 
 
@@ -67,5 +86,3 @@ class AgentFactory:
         else:
             raise ValueError("Invalid agent type")
 # Update in the Agent class
-
-
