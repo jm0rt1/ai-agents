@@ -35,6 +35,12 @@ class Predator(Agent):
     def __init__(self, x, y):
         super().__init__(x, y, PREDATOR_COLOR)
 
+    def can_eat(self, prey):
+        distance_to_prey = np.sqrt((self.x - prey.x)**2 + (self.y - prey.y)**2)
+        if distance_to_prey < 20:  # Assuming the radius of agents is 10
+            return True
+        return False
+
     def move_towards(self, target, speed=1):
         dx = target.x - self.x
         dy = target.y - self.y
