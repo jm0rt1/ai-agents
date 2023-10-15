@@ -9,6 +9,10 @@ WIDTH, HEIGHT = 800, 600
 PREDATOR_COLOR = (255, 0, 0)
 PREY_COLOR = (0, 255, 0)
 
+BASE_SPEED = 1
+PREDATOR_SPEED = 3
+PREY_SPEED = BASE_SPEED
+
 # Define the Predator and Prey classes
 
 
@@ -19,7 +23,7 @@ class Agent:
         self.color = color
         self.direction = np.random.rand() * 2 * np.pi
 
-    def move(self, speed=1):
+    def move(self, speed=BASE_SPEED):
         self.x += speed * np.cos(self.direction)
         self.y += speed * np.sin(self.direction)
 
@@ -41,7 +45,7 @@ class Predator(Agent):
             return True
         return False
 
-    def move_towards(self, target, speed=1):
+    def move_towards(self, target, speed=3):
         dx = target.x - self.x
         dy = target.y - self.y
 
@@ -59,8 +63,11 @@ class Predator(Agent):
 class Prey(Agent):
     def __init__(self, x, y):
         super().__init__(x, y, PREY_COLOR)
+        self.lifetime = 0
 
-    def move_away_from(self, target, speed=1):
+    ...
+
+    def move_away_from(self, target, speed=PREY_SPEED):
         dx = target.x - self.x
         dy = target.y - self.y
 
